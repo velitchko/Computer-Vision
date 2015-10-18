@@ -10,7 +10,7 @@ end
 
 % Align using NCC %
 % Matlab function corr2 computes the same thing as the NCC %
-function[out] = align(img_1, img_2)
+function [out] = align(img_1, img_2)
 max = 0;
 res = 0;
 for x = -15:15
