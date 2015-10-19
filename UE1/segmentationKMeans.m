@@ -6,10 +6,10 @@
 %  - thres: tells function when to stop the iteration [0, 1]
 % output:
 %  - Iout: output image
-function Iout = segmentationKMeans(I,numClusters, useXY, thres)
+function Iout = segmentationKMeans(I,numClusters, useXY, thres, maxIter)
 
     % threshold must be in range [0, 1]
-    assert(thres>=0 && thres<=1);
+    assert(thres>=0 && thres<=1);      
     
     % dimension of data can be 3 (rgb) or 5 (rgbxy)
     dim=3;
@@ -43,6 +43,7 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres)
     centroids=rand([numClusters dim]);
     
     % loop until convergence
+    ctr=0;
     while(1)    
         % 2. assign data points to nearest cluster centroids
         % calc dist between data and centroids
@@ -83,6 +84,11 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres)
 
         distortionMeasureOld=distortionMeasure;
 
+        ctr=ctr+1;
+        if(ctr>maxIter)
+            warning('no convergence! iteration now stops.');
+            break;
+        end
     end        
     
     % assign centroid value to each data point

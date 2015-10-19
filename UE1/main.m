@@ -2,19 +2,22 @@
 function main()
     close all;
 
-	% Part 1 Colorizing Images %
+	% Part 1 Colorizing Images %    
     disp('Part1 - begin');
 	Part1();
+    drawnow;
 
 
 	% Part 2 Image Segmentation by K-means Clustering %
     disp('Part2 - begin');
 	Part2();
+    drawnow;
 
 
 	% Part 3 Scale-Invariant Blob Detection %
     disp('Part3 - begin');
 	Part3();
+    drawnow;
 
 end
 
@@ -99,7 +102,58 @@ end
 
 % Part 2 k-Means %
 function Part2()
-	warning('Part2 not yet implemented!!!');
+	
+    % test images for this task
+    I={imread('simple.png'), imread('future.jpg'), imread('mm.jpg')};
+    
+    % part a: show images with 3d and 5d data vectors
+    disp('All images, fixed k=5, 3d and 5d ');
+    k=5;    
+    thres=0.9;
+    maxIter=1000;
+    for i=1:length(I)
+        disp('kmeans for next image ...');
+        disp('images where kmeans does not converge take a while (stopped after 1000 iterations) ...');
+        
+        useXY=false;
+        Iout3d=segmentationKMeans(I{i}, k, useXY, thres, maxIter);
+        
+        useXY=true;
+        Iout5d=segmentationKMeans(I{i}, k, useXY, thres, maxIter);
+        
+        figure;
+        imshow(Iout3d);
+        title('k=5, RGB');
+        
+        figure;
+        imshow(Iout5d);
+        title('k=5, RGB and XY');  
+        
+        drawnow;
+    end
+    
+    
+    % part b: show different values for k on I{3} (mm.jpg)
+    for k=[3 5 11 43]
+        disp('kmeans for next k value ...');
+        
+        useXY=false;
+        Iout3d=segmentationKMeans(I{3}, k, useXY, thres, maxIter);
+        
+        useXY=true;
+        Iout5d=segmentationKMeans(I{3}, k, useXY, thres, maxIter);
+        
+        figure;
+        imshow(Iout3d);
+        title(strcat('k=',num2str(k),', RGB'));
+        
+        figure;
+        imshow(Iout5d);
+        title(strcat('k=',num2str(k),', RGB and XY'));
+        
+        drawnow;
+    end
+    
 end
 
 
