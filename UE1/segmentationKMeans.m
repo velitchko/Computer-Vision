@@ -8,18 +8,18 @@
 %  - Iout: output image
 function Iout = segmentationKMeans(I,numClusters, useXY, thres)
 
+    % threshold must be in range [0, 1]
     assert(thres>=0 && thres<=1);
     
-    % dimension of data
+    % dimension of data can be 3 (rgb) or 5 (rgbxy)
     dim=3;
     if useXY
         dim=5;
     end
     
-    
+    % the original size of the image, to restore data vector later on
     originalSize=size(I);
         
-
     % init old distortion measure for first time usage
     distortionMeasureOld=Inf;
 
@@ -27,7 +27,11 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres)
     I=im2double(I);
     
     % put image into 1d data vector
-    data=imgToRGBVector(I);
+    if useXY
+        data=imgToRGBXYVector(I);    
+    else
+        data=imgToRGBVector(I);    
+    end
     lenData=size(data,1);
               
     % indicator matrix: 0 or 1. [dataPoint centroid]
@@ -38,6 +42,7 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres)
     % 1. initialize center values
     centroids=rand([numClusters dim]);
     
+    % loop until convergence
     while(1)    
         % 2. assign data points to nearest cluster centroids
         % calc dist between data and centroids
@@ -56,20 +61,21 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres)
         % 3. new cluster centroids
         for i=1:numClusters
             % number of datapoints assigned to cluster i
-            sumOfData=sum(repmat(indicatorMatrix(:,i),[1 3]).*data);
+            sumOfData=sum(repmat(indicatorMatrix(:,i),[1 dim]).*data);
             numAssignedData=sum(indicatorMatrix(:,i));        
 
             % new cluster centroid
             centroids(i,:)=sumOfData/numAssignedData;
         end
 
-        % calc distortion measure, check for convergence
+        % 4. calc distortion measure, check for convergence
         distortionMeasure=0;
         for i=1:numClusters
             v=data-repmat(centroids(i,:),[lenData 1]);
             distortionMeasure=sum(indicatorMatrix(:,i).*dot(v,v,2));        
         end
 
+        % ratio of old and new distortion measure
         ratio=distortionMeasure/distortionMeasureOld;
         if ratio>thres
             break;
@@ -77,25 +83,45 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres)
 
         distortionMeasureOld=distortionMeasure;
 
-    end
+    end        
     
-    
-    
-    % assign centroid value to each pixel
+    % assign centroid value to each data point
     for i=1:numClusters
         idx=find(indicatorMatrix(:,i)==1);
         data(idx,:)=repmat(centroids(i,:),[length(idx) 1]);
     end
+    
+    % throw xy data away to just put rgb data into final image
+    if useXY
+        data=data(:,1:3);
+    end
+    
+    % reshape data vector to original image size
     Iout=reshape(data,originalSize);
     
 end
 
-% convert 
-function v=imgToRGBVector(I)    
-    v=reshape(I,[],3);
+
+% convert image to vector of rgb data points
+function rgbVector=imgToRGBVector(I)    
+    rgbVector=reshape(I,[],3);
 end
 
-% TODO
-% function v=imgToRGBXYVector
-%     v=[];
-% end
+
+% convert image to vector of rgbxy data points
+function rgbxyVector=imgToRGBXYVector(I)
+    % calc rgb data vector 
+    rgbVector=imgToRGBVector(I);
+    
+    % create xy grid, normalize xy
+    [x,y]=meshgrid(1:size(I,1),1:size(I,2));
+    x=x'/size(I,1);
+    y=y'/size(I,2);
+    
+    % reshape to 1d vectors
+    x1d=reshape(x,[],1);
+    y1d=reshape(y,[],1);
+    
+    % glue all data together
+    rgbxyVector=cat(2,rgbVector,x1d,y1d);
+end
