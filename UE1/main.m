@@ -1,10 +1,11 @@
 % Main.m - main entry for the first exercise. %
 function main()
     close all;
+    drawnow;
 
 	% Part 1 Colorizing Images %    
     disp('Part1 - begin');
-	Part1();
+	%Part1();
     drawnow;
 
 
@@ -104,52 +105,61 @@ end
 function Part2()
 	
     % test images for this task
-    I={imread('simple.png'), imread('future.jpg'), imread('mm.jpg')};
+    filenames={'simple.png', 'future.jpg', 'mm.jpg'};
     
     % part a: show images with 3d and 5d data vectors
     disp('All images, fixed k=5, 3d and 5d ');
     k=5;    
     thres=0.9;
-    maxIter=1000;
-    for i=1:length(I)
-        disp('kmeans for next image ...');
-        disp('images where kmeans does not converge take a while (stopped after 1000 iterations) ...');
+    maxIter=500;
+    for i=1:length(filenames)
+        currFilename=filenames{i};
+        I=imread(currFilename);
+        
+        disp(strcat('kmeans for next image: ',currFilename));
+        disp('images where kmeans does not converge take a while (stopped after 500 iterations) ...');
         
         useXY=false;
-        Iout3d=segmentationKMeans(I{i}, k, useXY, thres, maxIter);
+        Iout3d=segmentationKMeans(I, k, useXY, thres, maxIter);
         
         useXY=true;
-        Iout5d=segmentationKMeans(I{i}, k, useXY, thres, maxIter);
+        Iout5d=segmentationKMeans(I, k, useXY, thres, maxIter);
         
         figure;
         imshow(Iout3d);
         title('k=5, RGB');
+        dumpImgage(Iout3d,strcat(currFilename,'_RGB'));
         
         figure;
         imshow(Iout5d);
-        title('k=5, RGB and XY');  
+        title('k=5, RGB and XY');
+        dumpImgage(Iout5d,strcat(currFilename,'_RGBXY'));
         
         drawnow;
     end
     
     
     % part b: show different values for k on I{3} (mm.jpg)
-    for k=[3 5 11 43]
-        disp('kmeans for next k value ...');
+    I=imread(filenames{3});
+    maxIter=100;
+    for k=[3 5 11 17]        
+        disp(strcat('kmeans for next k value: ',num2str(k)));
         
         useXY=false;
-        Iout3d=segmentationKMeans(I{3}, k, useXY, thres, maxIter);
+        Iout3d=segmentationKMeans(I, k, useXY, thres, maxIter);
         
         useXY=true;
-        Iout5d=segmentationKMeans(I{3}, k, useXY, thres, maxIter);
+        Iout5d=segmentationKMeans(I, k, useXY, thres, maxIter);
         
         figure;
         imshow(Iout3d);
         title(strcat('k=',num2str(k),', RGB'));
+        dumpImgage(Iout3d,strcat(currFilename,'_RGB_k',num2str(k)));
         
         figure;
         imshow(Iout5d);
         title(strcat('k=',num2str(k),', RGB and XY'));
+        dumpImgage(Iout5d,strcat(currFilename,'_RGBXY_k',num2str(k)));
         
         drawnow;
     end
@@ -160,4 +170,15 @@ end
 % Part 3 scale invariant blob detection %
 function Part3()
 	warning('Part3 not yet implemented!!!');
+end
+
+
+function dumpImgage(I,dumpName)
+    isEnabled=true;
+    
+    if(isEnabled)
+        dumpFolder='./dumps/';
+        imwrite(I,strcat(dumpFolder,dumpName,'.png'));
+    end
+    
 end
