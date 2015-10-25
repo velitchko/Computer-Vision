@@ -174,7 +174,7 @@ end
 
 
 function dumpImgage(I,dumpName)
-    isEnabled=true;
+    isEnabled=false;
     
     if(isEnabled)
         dumpFolder='./dumps/';
