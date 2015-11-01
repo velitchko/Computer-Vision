@@ -78,7 +78,7 @@ function [clusteredData] = kMeansMainLoop(data, numClusters, thres, maxIter)
     % algorithm as in PDF:
     % 1. initialize center values
     centroids=rand([numClusters dim]);
-
+    dbgClusterSize=zeros([numClusters 1]);
     % loop until convergence
     ctr=0;
     while(1)    
@@ -100,10 +100,17 @@ function [clusteredData] = kMeansMainLoop(data, numClusters, thres, maxIter)
         for i=1:numClusters
             % number of datapoints assigned to cluster i
             sumOfData=sum(repmat(indicatorMatrix(:,i),[1 dim]).*data);
-            numAssignedData=sum(indicatorMatrix(:,i));        
-
+            numAssignedData=sum(indicatorMatrix(:,i));    
+            
             % new cluster centroid
-            centroids(i,:)=sumOfData/numAssignedData;
+            if numAssignedData>0                                         
+                centroids(i,:)=sumOfData/numAssignedData;            
+            end
+            
+            if showDebugInfo()
+                dbgClusterSize(i,ctr+1)=numAssignedData;
+            end
+                
         end
 
         % 4. calc distortion measure, check for convergence
@@ -114,7 +121,12 @@ function [clusteredData] = kMeansMainLoop(data, numClusters, thres, maxIter)
         end
 
         % ratio of old and new distortion measure
-        ratio=distortionMeasure/distortionMeasureOld;
+        ratio=1;
+        if distortionMeasureOld ~= 0
+            ratio=distortionMeasure/distortionMeasureOld;
+        end
+        
+        % stop if result is good enough
         if ratio>thres
             break;
         end
@@ -123,7 +135,9 @@ function [clusteredData] = kMeansMainLoop(data, numClusters, thres, maxIter)
 
         ctr=ctr+1;
         if(ctr>maxIter)
-            warning('no convergence! iteration now stops.');
+            if showDebugInfo()
+                warning('no convergence! iteration now stops.');
+            end
             break;
         end
     end        
@@ -135,6 +149,19 @@ function [clusteredData] = kMeansMainLoop(data, numClusters, thres, maxIter)
     end
     
     clusteredData=data;
+    
+    % show debug info
+    if showDebugInfo()
+        figure;
+        hold on        
+        for i=1:numClusters
+            plot(dbgClusterSize(i,:),'LineWidth',2);
+        end
+        title('debug info: change of cluster size');
+        hold off;
+        
+    end   
+    
 end
 
 
@@ -160,4 +187,10 @@ function rgbxyVector=imgToRGBXYVector(I)
     
     % glue all data together
     rgbxyVector=cat(2,rgbVector,x1d,y1d);
+end
+
+
+% show debug information
+function res=showDebugInfo()
+    res=false;
 end

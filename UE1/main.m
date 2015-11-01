@@ -5,7 +5,7 @@ function main()
 
 	% Part 1 Colorizing Images %    
     disp('Part1 - begin');
-	%Part1();
+	Part1(); 
     drawnow;
 
 
