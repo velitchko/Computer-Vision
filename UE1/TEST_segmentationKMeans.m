@@ -1,7 +1,22 @@
 % test function for kmeans - will later be implemented into main
 function TEST_segmentationKMeans()
-    %I=imread('mm.jpg');
-    I=imread('future.jpg');
-    Iout=segmentationKMeans(I,5,true,0.9,1000);
+
+    close all;
+
+    filenames={'mm.jpg', 'future.jpg', 'simple.PNG'};
+    I=imread(filenames{1});
+    
+    numClusters=5;
+    useXY=true;
+    thres=0.999999;
+    maxIter=1000;
+    useMatlabKMeans=false;
+    
+    
+    Iout=segmentationKMeans(I, numClusters, useXY, thres, maxIter, useMatlabKMeans);
+    
+    
+    %close all;
+    figure;
     imshow(Iout);
 end

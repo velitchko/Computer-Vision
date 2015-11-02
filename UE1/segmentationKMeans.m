@@ -4,27 +4,27 @@
 %  - numClusters: number of clusters kmeans should use
 %  - useXY: uses the spatial information too
 %  - thres: tells function when to stop the iteration [0, 1]
+%  - maxIter: max. number of iterations, afterwards algorithm stops
+%  - useMatlabKMeans: use kmeans of Matlab instead (for testing only!!!)
 % output:
 %  - Iout: output image
-function Iout = segmentationKMeans(I,numClusters, useXY, thres, maxIter)
+function Iout = segmentationKMeans(I,numClusters, useXY, thres, maxIter, useMatlabKMeans)
+
+    % prepare input parameters ...
 
     % threshold must be in range [0, 1]
-    assert(thres>=0 && thres<=1);      
+    assert(thres>=0 && thres<=1);
     
-    % dimension of data can be 3 (rgb) or 5 (rgbxy)
-    dim=3;
-    if useXY
-        dim=5;
-    end
+    % default: use own kmeans implementation
+    if nargin<6
+        useMatlabKMeans=false;
+    end  
     
     % the original size of the image, to restore data vector later on
-    originalSize=size(I);
-        
-    % init old distortion measure for first time usage
-    distortionMeasureOld=Inf;
+    originalSize=size(I);           
 
     % just to be sure that each color channel has the limits [0, 1]
-    I=im2double(I);
+    I=im2double(I);              
     
     % put image into 1d data vector
     if useXY
@@ -32,16 +32,53 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres, maxIter)
     else
         data=imgToRGBVector(I);    
     end
+    
+    
+    % call kmeans core function: can be our implementation 
+    % or for testing the Matlab implementation
+    if useMatlabKMeans
+
+        [idx,C]=kmeans(data, numClusters); % Matlab implementation
+        
+        for i=1:length(data)
+            data(i,:)=C(idx(i),:);
+        end
+        
+        warning('you are using kmeans of Matlab, not our kmeans!!');
+                
+    else
+        data=kMeansMainLoop(data, numClusters, thres, maxIter); % our implementation
+    end
+    
+    
+    % throw xy data away to just put rgb data into final image
+    if useXY
+        data=data(:,1:3);
+    end
+    
+    % reshape data vector to original image size
+    Iout=reshape(data,originalSize);
+    
+end
+
+
+% main loop for clustering the data
+function [clusteredData] = kMeansMainLoop(data, numClusters, thres, maxIter)
+          
+    % init old distortion measure for first time usage
+    distortionMeasureOld=Inf;
+    
+    % data length
     lenData=size(data,1);
-              
+    dim=size(data,2);
+    
     % indicator matrix: 0 or 1. [dataPoint centroid]
     indicatorMatrix=zeros([lenData numClusters]);
-    
-    
+
     % algorithm as in PDF:
     % 1. initialize center values
     centroids=rand([numClusters dim]);
-    
+    dbgClusterSize=zeros([numClusters 1]);
     % loop until convergence
     ctr=0;
     while(1)    
@@ -63,10 +100,17 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres, maxIter)
         for i=1:numClusters
             % number of datapoints assigned to cluster i
             sumOfData=sum(repmat(indicatorMatrix(:,i),[1 dim]).*data);
-            numAssignedData=sum(indicatorMatrix(:,i));        
-
+            numAssignedData=sum(indicatorMatrix(:,i));    
+            
             % new cluster centroid
-            centroids(i,:)=sumOfData/numAssignedData;
+            if numAssignedData>0                                         
+                centroids(i,:)=sumOfData/numAssignedData;            
+            end
+            
+            if showDebugInfo()
+                dbgClusterSize(i,ctr+1)=numAssignedData;
+            end
+                
         end
 
         % 4. calc distortion measure, check for convergence
@@ -77,7 +121,12 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres, maxIter)
         end
 
         % ratio of old and new distortion measure
-        ratio=distortionMeasure/distortionMeasureOld;
+        ratio=1;
+        if distortionMeasureOld ~= 0
+            ratio=distortionMeasure/distortionMeasureOld;
+        end
+        
+        % stop if result is good enough
         if ratio>thres
             break;
         end
@@ -86,24 +135,32 @@ function Iout = segmentationKMeans(I,numClusters, useXY, thres, maxIter)
 
         ctr=ctr+1;
         if(ctr>maxIter)
-            warning('no convergence! iteration now stops.');
+            if showDebugInfo()
+                warning('no convergence! iteration now stops.');
+            end
             break;
         end
     end        
-    
+
     % assign centroid value to each data point
     for i=1:numClusters
         idx=find(indicatorMatrix(:,i)==1);
         data(idx,:)=repmat(centroids(i,:),[length(idx) 1]);
     end
     
-    % throw xy data away to just put rgb data into final image
-    if useXY
-        data=data(:,1:3);
-    end
+    clusteredData=data;
     
-    % reshape data vector to original image size
-    Iout=reshape(data,originalSize);
+    % show debug info
+    if showDebugInfo()
+        figure;
+        hold on        
+        for i=1:numClusters
+            plot(dbgClusterSize(i,:),'LineWidth',2);
+        end
+        title('debug info: change of cluster size');
+        hold off;
+        
+    end   
     
 end
 
@@ -131,3 +188,12 @@ function rgbxyVector=imgToRGBXYVector(I)
     % glue all data together
     rgbxyVector=cat(2,rgbVector,x1d,y1d);
 end
+<<<<<<< HEAD
+=======
+
+
+% show debug information
+function res=showDebugInfo()
+    res=false;
+end
+>>>>>>> d9982d9fbf649b96ebcf4178e98d948edf791396
