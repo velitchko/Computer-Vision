@@ -159,5 +159,17 @@ end
 
 % Part 3 scale invariant blob detection %
 function Part3()
-	warning('Part3 not yet implemented!!!');
+    alpha0 = 2.0;
+    k = 1.25;
+    img = imread('butterfly.jpg');
+    
+
+    %Part a:
+    scale_space = createScaleSpace(alpha0, k, 10, img);
+    
+    % Part b:
+    [yVec,xVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k);
+    
+    show_all_circles(img, xVec, yVec, scaleVec);
+    
 end
