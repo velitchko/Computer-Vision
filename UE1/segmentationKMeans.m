@@ -188,12 +188,8 @@ function rgbxyVector=imgToRGBXYVector(I)
     % glue all data together
     rgbxyVector=cat(2,rgbVector,x1d,y1d);
 end
-<<<<<<< HEAD
-=======
-
 
 % show debug information
 function res=showDebugInfo()
     res=false;
 end
->>>>>>> d9982d9fbf649b96ebcf4178e98d948edf791396
