@@ -171,16 +171,45 @@ end
 function Part3()
     alpha0 = 2.0;
     k = 1.25;
-    img = imread('butterfly.jpg');
+    levels = 10;
+    
+    test_img = imread('butterfly.jpg');
+    test_img_resized = imresize(test_img, 0.5);
+    my_img = rgb2gray(imread('mm.jpg'));
+    my_img_resized = imresize(my_img, 0.5);
     
 
     %Part a:
-    scale_space = createScaleSpace(alpha0, k, 10, img);
+    scale_space = createScaleSpace(alpha0, k, levels, test_img);        
     
     % Part b:
-    [yVec,xVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k);
+    [xVec,yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
     
-    show_all_circles(img, xVec, yVec, scaleVec);
+    show_all_circles(test_img, yVec, xVec, scaleVec);
+    
+    drawnow; 
+    figure;
+    
+    scale_space = createScaleSpace(alpha0, k, levels, test_img_resized);
+    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
+    
+    show_all_circles(test_img_resized, yVec, xVec, scaleVec);
+    
+    drawnow;
+    figure;
+    
+    scale_space = createScaleSpace(alpha0, k, levels, my_img);
+    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
+    
+    show_all_circles(my_img, yVec, xVec, scaleVec);
+    
+    drawnow;
+    figure;
+    
+    scale_space = createScaleSpace(alpha0, k, levels, my_img_resized);
+    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
+    
+    show_all_circles(my_img_resized, yVec, xVec, scaleVec);    
     
 end
 
