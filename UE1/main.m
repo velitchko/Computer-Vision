@@ -175,7 +175,7 @@ function Part3()
     
     test_img = imread('butterfly.jpg');
     test_img_resized = imresize(test_img, 0.5);
-    my_img = rgb2gray(imread('mm.jpg'));
+    my_img = rgb2gray(imread('part3testImage.jpeg'));
     my_img_resized = imresize(my_img, 0.5);
     
 
