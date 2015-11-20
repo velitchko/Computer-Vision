@@ -172,6 +172,7 @@ function Part3()
     alpha0 = 2.0;
     k = 1.25;
     levels = 10;
+    threshold = 25;
     
     test_img = imread('butterfly.jpg');
     test_img_resized = imresize(test_img, 0.5);
@@ -183,33 +184,92 @@ function Part3()
     scale_space = createScaleSpace(alpha0, k, levels, test_img);        
     
     % Part b:
-    [xVec,yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
+    [xVec,yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels, threshold);
+    
     
     show_all_circles(test_img, yVec, xVec, scaleVec);
     
     drawnow; 
     figure;
     
+    mm = size(xVec,1)- 30;
+    point = [xVec(mm),yVec(mm)];
+    
+    test_img_plot_Y = reshape(scale_space(point(1),point(2), :), [], 1);
+    
+    show_all_circles(test_img,point(2), point(1), scaleVec(mm));
+    
+    drawnow;
+    figure;
+    
+    
     scale_space = createScaleSpace(alpha0, k, levels, test_img_resized);
-    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
+    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels, threshold/2);
     
     show_all_circles(test_img_resized, yVec, xVec, scaleVec);
+    
+    
+    drawnow;
+    figure;
+    
+    mm2 = size(xVec,1) - 80;
+    point2 = [xVec(mm2), yVec(mm2)];
+    test_img_resized_plot_Y = reshape(scale_space(point2(1),point2(2), :), [], 1);
+    
+    show_all_circles(test_img_resized,point2(2), point2(1), scaleVec(mm2));
+    
+    drawnow;
+    figure;
+    
+    plot([1:levels], test_img_plot_Y, '-ro', [1:levels], test_img_resized_plot_Y, '-bo');
+    title('Response of the Log Filter on specific scale space level');
+    xlabel('Scale Space Level') % x-axis label
+    ylabel('Absolute response of the LoG filter') % y-axis label
+    legend('Test image', 'Test image on half size');
     
     drawnow;
     figure;
     
     scale_space = createScaleSpace(alpha0, k, levels, my_img);
-    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
+    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels, threshold);
     
     show_all_circles(my_img, yVec, xVec, scaleVec);
     
     drawnow;
     figure;
     
+    mm = size(xVec,1)- 2;
+    point = [xVec(mm),yVec(mm)];
+    
+    show_all_circles(my_img, point(2), point(1), scaleVec(mm));
+    test_img_plot_Y = reshape(scale_space(point(1), point(2),:),[],1);
+    
+    
+    drawnow;
+    figure;
+    
     scale_space = createScaleSpace(alpha0, k, levels, my_img_resized);
-    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels);
+    [xVec, yVec, scaleVec] = findMaximaInScaleSpace(scale_space, alpha0, k, levels, threshold/2);
     
     show_all_circles(my_img_resized, yVec, xVec, scaleVec);    
+    
+    drawnow;
+    figure;
+    
+    mm2 = size(xVec,1)- 4;
+    point2 = [xVec(mm2),yVec(mm2)];
+    test_img_resized_plot_Y = reshape(scale_space(point2(1), point2(2),:),[],1);
+    
+    show_all_circles(my_img_resized,point2(2), point2(1), scaleVec(mm2));
+    
+    drawnow;
+    figure;
+    
+    plot([1:levels], test_img_plot_Y, '-ro', [1:levels], test_img_resized_plot_Y, '-bo');
+    title('Response of the Log Filter on specific scale space level');
+    xlabel('Scale Space Level') % x-axis label
+    ylabel('Absolute response of the LoG filter') % y-axis label
+    legend('Our own image', 'Our own image on half size');
     
 end
 
