@@ -1,4 +1,4 @@
-% get list of images: filepath + group (class label)
+% get list of images in a given folder
 function [filePaths,groupNames,groupIdx,namesClasses,numClasses] = getImageList(folder)
 
     filePaths=cell(1);

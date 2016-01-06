@@ -1,5 +1,4 @@
-%
-%
+% find visual words as clusters in 128-dim SIFT space
 function [wordsCentroids] = BuildVocabulary(folder, num_clusters)
     wordsCentroids=[];
     
@@ -12,7 +11,7 @@ function [wordsCentroids] = BuildVocabulary(folder, num_clusters)
     
     % iterate through all training images
     numFilePaths=length(filePaths);
-    % numFilePaths=100; % TODO: remove, just for testing
+    %numFilePaths=100; % TODO: remove, just for testing
     
     for n=1:numFilePaths
         currFilePath=filePaths{n};
@@ -22,6 +21,7 @@ function [wordsCentroids] = BuildVocabulary(folder, num_clusters)
         sampledIndices=randsample(size(descriptors,2),100); % get 100 indices from all possible indices
         allDescriptors=[allDescriptors, descriptors(:,sampledIndices)]; % only take a subset of all descriptors
         
+        % just some alive message
         if mod(n,100) == 0
             disp(strcat('BuildVocabulary: image #',num2str(n)));
         end

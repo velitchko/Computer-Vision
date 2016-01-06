@@ -1,3 +1,4 @@
+% get histogram of visual words contained in a given image
 function [wordHistogram] = getWordHistogram(I,wordsCentroids)
     % calc SIFT descriptors
     [~,descriptors]=vl_dsift(I,'Step',2,'Fast');
