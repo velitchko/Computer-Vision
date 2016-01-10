@@ -3,9 +3,15 @@ function main()
     Part5();
 end
 
-
 function Part4()
     disp('Part4 - begin');
+    
+    % Part A:
+    I = single(rgb2gray(imread('input/officeview1.jpg')));
+    showSiftFeatures(I);
+    
+    % Part B:
+    
 end
 
 
