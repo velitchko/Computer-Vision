@@ -1,6 +1,6 @@
 function main()
     Part4();
-    %Part5();
+    Part5();
 end
 
 function Part4()
@@ -11,10 +11,13 @@ function Part4()
     showSiftFeatures(I);
     
     % Part B:
+    N = 1000;
+    T = 5;
+    
     I1 = im2single(rgb2gray(imread('input/officeview1.jpg')));
     I2 = im2single(rgb2gray(imread('input/officeview2.jpg')));
     
-    interestPointMatching(I1, I2, N);
+    interestPointMatching(I1, I2, N, T);
     
 end
 
