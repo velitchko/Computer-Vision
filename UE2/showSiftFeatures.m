@@ -1,6 +1,6 @@
 function showSiftFeatures(I)
-    features = vl_sift(I);
-    image(I);
+    [features, desc] = vl_sift(I);
+    imshow(I);
     vl_plotframe(features);
 
 end
