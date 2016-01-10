@@ -7,10 +7,12 @@ function Part4()
     disp('Part4 - begin');
     
     % Part A:
-    I = single(rgb2gray(imread('input/officeview1.jpg')));
+    I = im2single(rgb2gray(imread('input/officeview1.jpg')));
     showSiftFeatures(I);
     
     % Part B:
+    I1 = single(rgb2gray(imread('input/officeview1.jpg')));
+    I2 = single(rgb2gray(imread('input/officeview2.jpg')));
     
 end
 
