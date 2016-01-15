@@ -1,6 +1,6 @@
 function main()
     Part4();
-    Part5();
+    %Part5();
 end
 
 function Part4()
@@ -18,6 +18,8 @@ function Part4()
     I2 = im2single(rgb2gray(imread('input/officeview2.jpg')));
     
     interestPointMatching(I1, I2, N, T);
+    
+    % Part C:
     
 end
 
