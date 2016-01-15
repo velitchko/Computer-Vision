@@ -1,6 +1,6 @@
 function main()
     Part4();
-    %Part5();
+    Part5();
 end
 
 function Part4()

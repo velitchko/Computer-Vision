@@ -1,4 +1,4 @@
-function interestPointMatching(I1, I2, N, T) 
+function trans = interestPointMatching(I1, I2, N, T) 
      % Part B.1
     [features1, desc1] = vl_sift(I1);
     [features2, desc2] = vl_sift(I2);
@@ -60,22 +60,22 @@ function interestPointMatching(I1, I2, N, T)
            
     newPoints = squeeze(tformfwd(trans, features1(1, otherPointsX), features1(2, otherPointsX))); 
     
-    xData = [min(newPoints(:,1)), max(newPoints(:,1))];
-    yData = [min(newPoints(:,2)), max(newPoints(:,2))];
+    xData = [min(yMatches(1,:)), max(yMatches(1,:))]
+    yData = [min(yMatches(2,:)), max(yMatches(2,:))]
     
-    xyScale =  [xData(2) - xData(1), yData(2) - yData(1)] ./ [size(I2,2) size(I2,1)];
+    xyScale =  [xData(2) - xData(1), yData(2) - yData(1)] ./ [max(xMatches(1,:)) - min(xMatches(1,:)), max(xMatches(2,:)) - min(xMatches(2,:))];
     
     %Part B.5
-    I = imtransform(I1, trans);%, 'XData', xData,'YData', yData, 'XYScale', xyScale );
+    I = imtransform(I1, trans, 'XData', xData,'YData', yData, 'XYScale', xyScale );
     figure;
     imshow(I)
     figure;
     
-    x = floor(xData(1) * xyScale(2));
-    y = floor(yData(1) * xyScale(1));
+    x = floor(xData(1) );
+    y = floor(yData(1) );
     
     overlay = zeros(2000,2000);
     overlay(max(1,y): max(1,y) - 1 + size(I,1), max(1,x): max(1,x) - 1 + size(I,2)) = I;
-    overlay(abs(min(1,y)):abs(min(1,y)) + size(I2,1) - 1 , abs(min(1,x)): abs(min(1,x)) + size(I2,2) -1) = abs(overlay(abs(min(1,y)):abs(min(1,y)) + size(I2,1) - 1 , abs(min(1,x)): abs(min(1,x)) + size(I2,2) -1) - I2);
+    overlay(abs(min(1,y)):abs(min(1,y)) + size(I2,1) - 1 , abs(min(1,x)): abs(min(1,x)) + size(I2,2) -1) = abs(overlay(abs(min(1,y)):abs(min(1,y)) + size(I2,1) - 1 , abs(min(1,x)): abs(min(1,x)) + size(I2,2) -1) - I2 );
     imshow(overlay);
 end
