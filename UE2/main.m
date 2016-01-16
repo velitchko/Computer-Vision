@@ -1,25 +1,15 @@
 function main()
     Part4();
-    Part5();
+   % Part5();
 end
 
 function Part4()
     disp('Part4 - begin');
     
-    % Part A:
-    I = im2single(rgb2gray(imread('input/officeview1.jpg')));
-    showSiftFeatures(I);
-    
-    % Part B:
-    N = 1000;
-    T = 5;
-    
-    I1 = im2single(rgb2gray(imread('input/officeview1.jpg')));
-    I2 = im2single(rgb2gray(imread('input/officeview2.jpg')));
-    
-    interestPointMatching(I1, I2, N, T);
-    
-    % Part C:
+    panoramaOut = panorama('input/officeview1.jpg', 'input/officeview2.jpg', 'input/officeview3.jpg', 'input/officeview4.jpg', 'input/officeview5.jpg'); 
+    figure;
+    imshow(panoramaOut);
+  
     
 end
 
