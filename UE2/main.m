@@ -4,10 +4,11 @@ function main()
     % bitte das Kommando einmalig !lokal! ausführen und anschließend savepath aufrufen
     % bei mir gibts sonst Probleme mit den Pfaden der MEX Files 
     %run('vlfeat-0.9.20/toolbox/vl_setup');     
-    
+    figure;
     Part4(1);
     drawnow;
     
+    figure;
     Part5();
     drawnow;
     
