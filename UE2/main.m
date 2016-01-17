@@ -1,8 +1,16 @@
 function main()
+    
     %% init VLFeat lib 
-    run('vlfeat-0.9.20/toolbox/vl_setup');
+    % bitte das Kommando einmalig !lokal! ausführen und anschließend savepath aufrufen
+    % bei mir gibts sonst Probleme mit den Pfaden der MEX Files 
+    %run('vlfeat-0.9.20/toolbox/vl_setup');     
+    
     Part4(1);
+    drawnow;
+    
     Part5();
+    drawnow;
+    
 end
 
 function Part4(c)
