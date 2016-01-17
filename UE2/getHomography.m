@@ -1,48 +1,56 @@
+%% returns the homography between two images
+%% assumes that image2 is right of image1
 function homography = getHomography(image1, image2)
         %% # of loops
         N = 1000;
         %% threshold
         thresh = 5;
-        [f1, d1] = vl_sift(image1);
-        [f2, d2] = vl_sift(image2);
+        [frames1, desc1] = vl_sift(image1);
+        [frames2, desc2] = vl_sift(image2);
         %% matches
-        matches = vl_ubcmatch(d1,d2);
+        panoMatches = vl_ubcmatch(desc1,desc2);
         %% sift point positions
-        pos1 = f1(1:2, matches(1,:))';
-        pos2 = f2(1:2, matches(2,:))';
+        pointsImg1 = frames1(1:2, panoMatches(1,:))';
+        pointsImg2 = frames2(1:2, panoMatches(2,:))';
         inliers = [];
-        for k = 1 : 1 : N
-            perm = randperm(size(matches,2));
+        for i = 1 : N
+            %% permutate the matches 
+            perm = randperm(size(panoMatches,2));
+            %% get 4 random points from panoMatches
             idx = perm(1:4);
-            ctrl = perm(5:end);
+            %% remaining SIFT points
+            remainingSIFT = perm(5:end);
             curr = [];
             %% compute homography throws exception if 
             %% points are collinear (like in description)
             try
                 %% compare transformed points between both images
-                homograph = cp2tform(pos1(idx,:), pos2(idx,:), 'projective');
-                %% evaluate homography
-                ctrl1 = pos1(ctrl,:);
-                ctrl2 = pos2(ctrl,:);
-                [x1, y1] = tformfwd(homograph, ctrl1(:,1), ctrl1(:,2));
+                homography = cp2tform(pointsImg1(idx,:), pointsImg2(idx,:), 'projective');
+                %% evaluate homography by comparing control points
+                controlPointsImg1 = pointsImg1(remainingSIFT,:);
+                controlPointsImg2 = pointsImg2(remainingSIFT,:);
+                %% transform img1
+                [x1, y1] = tformfwd(homography, controlPointsImg1(:,1), controlPointsImg1(:,2));
                 transformed = [x1, y1];
                 %% if distance less than threshold
                 %% point is an inlier
-                for j = 1 : 1 : size(ctrl1,1)
-                    dist = norm(transformed(j,:) - ctrl2(j,:));
+                for j = 1 : 1 : size(controlPointsImg1,1)
+                    dist = norm(transformed(j,:) - controlPointsImg2(j,:));
                     if dist < thresh
-                        curr =[curr, ctrl(j)];
+                        curr =[curr, remainingSIFT(j)];
                     end
                 end
-                
+                %% if current array has more inliers than 
+                %% inliers array update it
                 if size(curr,2) > max(size(inliers,2),3)
                     inliers = curr;
                 end
                 
-            catch err
+            catch exception
                %% exception caught
+               warning('4 randomly chosen points are collinear, cannot compute homography.');
             end
         end
-    
-    homography = cp2tform(pos1(inliers,:),pos2(inliers,:),'projective');
+    %% return final homography between img1 and img2
+    homography = cp2tform(pointsImg1(inliers,:),pointsImg2(inliers,:),'projective');
 end

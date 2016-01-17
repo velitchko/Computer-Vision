@@ -1,16 +1,30 @@
 function main()
-    Part4();
-   % Part5();
+    %% init VLFeat lib 
+    run('vlfeat-0.9.20/toolbox/vl_setup');
+    Part4(1);
+    Part5();
 end
 
-function Part4()
+function Part4(c)
     disp('Part4 - begin');
-    
-    panoramaOut = panorama('input/officeview1.jpg', 'input/officeview2.jpg', 'input/officeview3.jpg', 'input/officeview4.jpg', 'input/officeview5.jpg'); 
-    figure;
-    imshow(panoramaOut);
-  
-    
+    if c == 1
+        panoramaOut = panorama('input/officeview1.jpg', 'input/officeview2.jpg', 'input/officeview3.jpg', 'input/officeview4.jpg', 'input/officeview5.jpg');
+        figure(1);
+        title('Office View');
+        imshow(panoramaOut);
+    end
+    if c == 2
+        panoramaOut = panorama('input/campus1.jpg', 'input/campus2.jpg', 'input/campus3.jpg', 'input/campus4.jpg', 'input/campus5.jpg'); 
+        figure(2);
+        title('Campus');
+        imshow(panoramaOut);
+    end
+    if c == 3
+        panoramaOut = panorama('input/user1.jpg', 'input/user2.jpg', 'input/user3.jpg', 'input/user4.jpg', 'input/user5.jpg'); 
+        figure(2);
+        title('User');
+        imshow(panoramaOut);
+    end
 end
 
 

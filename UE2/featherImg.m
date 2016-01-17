@@ -5,7 +5,6 @@ function featheredImg = featherImg(image)
     tmp(:,1) = 1;
     tmp(height, :) = 1;
     tmp(:, width) = 1;
-    
     featheredImg = bwdist(tmp);
     featheredImg = ~tmp - featheredImg;
 end
