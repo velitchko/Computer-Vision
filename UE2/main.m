@@ -16,6 +16,13 @@ end
 
 function Part4(c)
     disp('Part4 - begin');
+    
+    I = im2single(rgb2gray(imread('input/officeview1.jpg')));
+    showSiftFeatures(I);
+    I2 = im2single(rgb2gray(imread('input/officeview2.jpg')));
+    
+    interestPointMatching(I,I2, 1000, 5);
+    
     if c == 1
         panoramaOut = panorama('input/officeview1.jpg', 'input/officeview2.jpg', 'input/officeview3.jpg', 'input/officeview4.jpg', 'input/officeview5.jpg');
         figure(1);
