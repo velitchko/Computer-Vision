@@ -8,9 +8,9 @@ function main()
     Part4(1);
     drawnow;
     
-   % figure;
-    %Part5();
-   % drawnow;
+    figure;
+    Part5();
+    drawnow;
     
 end
 
