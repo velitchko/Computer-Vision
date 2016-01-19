@@ -60,13 +60,16 @@ function trans = interestPointMatching(I1, I2, N, T)
            
     newPoints = squeeze(tformfwd(trans, features1(1, otherPointsX), features1(2, otherPointsX))); 
     
-    xData = [min(yMatches(1,:)), max(yMatches(1,:))]
-    yData = [min(yMatches(2,:)), max(yMatches(2,:))]
+    width = size(I2,2);
+    height = size(I2,1); 
     
-    xyScale =  [xData(2) - xData(1), yData(2) - yData(1)] ./ [max(xMatches(1,:)) - min(xMatches(1,:)), max(xMatches(2,:)) - min(xMatches(2,:))];
+    xData = [min(yMatches(1,:)), max(yMatches(1,:))];
+    yData = [min(yMatches(2,:)), max(yMatches(2,:))];
+    
+    xyScale =  [xData(2) - xData(1), yData(2) - yData(1)] ./ [size(I2,1), size(I2,2)]; %[max(xMatches(1,:)) - min(xMatches(1,:)), max(xMatches(2,:)) - min(xMatches(2,:))];
     
     %Part B.5
-    I = imtransform(I1, trans, 'XData', xData,'YData', yData, 'XYScale', xyScale );
+    I = imtransform(I1, trans, 'XData', xData,'YData', yData, 'XYScale', size(I1)./size(I2) );
     figure;
     imshow(I)
     figure;

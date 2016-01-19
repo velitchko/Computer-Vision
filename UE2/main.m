@@ -23,6 +23,10 @@ function Part4(c)
     
     interestPointMatching(I,I2, 1000, 5);
     
+    I2 = imrotate(imresize(I2,0.5),45);
+    
+    interestPointMatching(I,I2, 1000, 5);
+    
     if c == 1
         panoramaOut = panorama('input/officeview1.jpg', 'input/officeview2.jpg', 'input/officeview3.jpg', 'input/officeview4.jpg', 'input/officeview5.jpg');
         figure(1);
