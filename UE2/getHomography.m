@@ -5,6 +5,7 @@ function homography = getHomography(image1, image2)
         N = 1000;
         %% threshold
         thresh = 5;
+        %% PART A
         [frames1, desc1] = vl_sift(image1);
         [frames2, desc2] = vl_sift(image2);
         %% matches
@@ -13,14 +14,15 @@ function homography = getHomography(image1, image2)
         pointsImg1 = frames1(1:2, panoMatches(1,:))';
         pointsImg2 = frames2(1:2, panoMatches(2,:))';
         inliers = [];
+        %% PART B
         for i = 1 : N
             %% permutate the matches 
-            perm = randperm(size(panoMatches,2));
+            samplePoints = randperm(size(panoMatches,2));
             %% get 4 random points from panoMatches
-            idx = perm(1:4);
+            idx = samplePoints(1:4);
             %% remaining SIFT points
-            remainingSIFT = perm(5:end);
-            curr = [];
+            remainingSIFT = samplePoints(5:end);
+            matches = [];
             %% compute homography throws exception if 
             %% points are collinear (like in description)
             try
@@ -37,13 +39,13 @@ function homography = getHomography(image1, image2)
                 for j = 1 : 1 : size(controlPointsImg1,1)
                     dist = norm(transformed(j,:) - controlPointsImg2(j,:));
                     if dist < thresh
-                        curr =[curr, remainingSIFT(j)];
+                        matches = [matches, remainingSIFT(j)];
                     end
                 end
                 %% if current array has more inliers than 
                 %% inliers array update it
-                if size(curr,2) > max(size(inliers,2),3)
-                    inliers = curr;
+                if size(matches,2) > size(inliers,2)
+                    inliers = matches;
                 end
                 
             catch exception
